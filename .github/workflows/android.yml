@@ -31,6 +31,6 @@ jobs:
         ./gradlew assembleRelease
 
     - name: Deploy firebase
-	run: |
-	 firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --app ${FIREBASE_APP_ID} --token "$FIREBASE_TOKEN" --testers "ghdlwnsgh12@naver.com"
+      run: |
+        firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --app ${FIREBASE_APP_ID} --token "$FIREBASE_TOKEN" --testers "ghdlwnsgh12@naver.com"
 
