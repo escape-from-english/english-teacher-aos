@@ -2,6 +2,7 @@ package com.teacher.english.data.repository
 
 import android.util.Log
 import com.teacher.english.data.model.LoadingState
+import com.teacher.english.data.model.Word
 import com.teacher.english.data.model.Words
 import com.teacher.english.data.service.EnglishService
 import com.teacher.english.data.service.UploadService
@@ -49,7 +50,7 @@ class EnglishRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRandomWord(): Flow<LoadingState<String>> = flow {
+    override suspend fun getRandomWord(): Flow<LoadingState<Word>> = flow {
         emit(LoadingState.loading(null))
         try {
             val getRandomWordResp = englishService.getQuestion()
