@@ -28,7 +28,7 @@ class EnglishRepositoryImpl @Inject constructor(
                 it.toRequestBody(type?.toMediaTypeOrNull(), 0, it.size)
             }
             val body = requestFile?.let {
-                MultipartBody.Part.createFormData("file", "excel.xlsx", it)
+                MultipartBody.Part.createFormData("excelFile", "excel.xlsx", it)
             }
             if (body != null) {
                 uploadService.uploadFile(body)
