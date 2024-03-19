@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "287343408018",
+    "project_id": "english-teacher-f6f6c",
+    "storage_bucket": "english-teacher-f6f6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287343408018:android:8e70126776dead598bc74b",
+        "android_client_info": {
+          "package_name": "com.teacher.english"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkCAljPB3ld1F_rBiZBb6_icQxh6_Ocxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
