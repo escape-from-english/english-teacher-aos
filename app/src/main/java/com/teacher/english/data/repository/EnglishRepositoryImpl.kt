@@ -33,7 +33,6 @@ class EnglishRepositoryImpl @Inject constructor(
             if (body != null) {
                 uploadService.uploadFile(body)
             }
-
             emit(LoadingState.success(null))
         } catch (e: Exception) {
             emit(LoadingState.error(e, null))
