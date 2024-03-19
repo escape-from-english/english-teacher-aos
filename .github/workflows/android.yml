@@ -32,5 +32,7 @@ jobs:
 
     - name: Deploy firebase
       run: |
+        echo "$FIREBASE_APP_ID"
+        echo "$$FIREBASE_TOKEN"
         firebase appdistribution:distribute app/build/outputs/apk/release/app-release-unsigned.apk --app ${FIREBASE_APP_ID} --token "$FIREBASE_TOKEN" --testers "ghdlwnsgh12@naver.com"
 
