@@ -30,7 +30,10 @@ android {
     }
     signingConfigs {
         getByName("debug") {
-            storeFile = file("keystore/englishteacher.jks")
+            keyAlias = keystoreProps["keyAlias"] as String
+            keyPassword = keystoreProps["keyPassword"] as String
+            storeFile = file(keystoreProps["storeFile"] as String)
+            storePassword = keystoreProps["storePassword"] as String
         }
         create("release") {
             keyAlias = keystoreProps["keyAlias"] as String
