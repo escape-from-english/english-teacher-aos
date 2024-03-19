@@ -4,8 +4,10 @@ import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -50,6 +53,9 @@ fun MainScreen() {
     val isAddDialogOpen = remember {
         mutableStateOf(false)
     }
+    val isEnglishText = remember {
+        mutableStateOf(true)
+    }
     val textState = remember { mutableStateOf("") }
 
     if (ttsInitState) {
@@ -73,23 +79,35 @@ fun MainScreen() {
     ) {
         val (textField, ttsField, fileUploadField, getRandomWordButton, addWordButton) = createRefs()
 
-        Text(
+        Column(
             modifier = Modifier
                 .constrainAs(textField) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     top.linkTo(parent.top, margin = 200.dp)
-                }
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            text = randomWord.value.data ?: "",
-            fontSize = 30.sp,
-            color = Color.White
-        )
+                },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = if (isEnglishText.value) randomWord.value.data?.name ?: "" else randomWord.value.data?.meaning ?: "",
+                fontSize = 30.sp,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier
+                .height(12.dp))
+            Button(
+                modifier = Modifier,
+                onClick = { isEnglishText.value = !isEnglishText.value}) {
+                Text(text = "정답 확인")
+            }
+        }
 
         TTSSpeakButton(
             tts = tts,
-            text = randomWord.value.data ?: "",
+            text = randomWord.value.data?.name ?: "",
             modifier = Modifier
                 .constrainAs(ttsField) {
                     start.linkTo(parent.start)
