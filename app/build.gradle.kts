@@ -1,3 +1,5 @@
+import java.util.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.com.android.application)
@@ -6,6 +8,9 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlinx.serialization)
 }
+
+val keystoreProps = Properties()
+file("keystore/keystore.properties").inputStream().use { keystoreProps.load(it) }
 
 android {
     namespace = "com.teacher.english"
@@ -23,7 +28,17 @@ android {
             useSupportLibrary = true
         }
     }
-
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("keystore/englishteacher.jks")
+        }
+        create("release") {
+            keyAlias = keystoreProps["keyAlias"] as String
+            keyPassword = keystoreProps["keyPassword"] as String
+            storeFile = file(keystoreProps["storeFile"] as String)
+            storePassword = keystoreProps["storePassword"] as String
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
