@@ -29,5 +29,8 @@ jobs:
     - name: Build and deploy Android app
       run: |
         ./gradlew assembleRelease
-        firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --app ${FIREBASE_APP_ID} --token "$FIREBASE_TOKEN" --testers "ghdlwnsgh12@naver.com"
+
+    - name: Deploy firebase
+	run: |
+	 firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --app ${FIREBASE_APP_ID} --token "$FIREBASE_TOKEN" --testers "ghdlwnsgh12@naver.com"
 
