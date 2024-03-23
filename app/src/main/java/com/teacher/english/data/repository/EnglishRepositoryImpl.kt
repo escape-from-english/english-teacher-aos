@@ -54,7 +54,8 @@ class EnglishRepositoryImpl @Inject constructor(
         emit(LoadingState.loading(null))
         try {
             val getRandomWordResp = englishService.getQuestion()
-            emit(LoadingState.success(getRandomWordResp))
+            Log.d("random ", "$getRandomWordResp")
+            emit(LoadingState.success(getRandomWordResp.word))
         } catch (e: Exception) {
             emit(LoadingState.error(e, null))
         }

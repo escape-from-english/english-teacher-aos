@@ -19,6 +19,7 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,7 +65,9 @@ fun MainScreen() {
     }
 
 
-
+    LaunchedEffect(key1 = randomWord.value) {
+        tts.speak(randomWord.value.data?.name, TextToSpeech.QUEUE_FLUSH, null, "")
+    }
 
     // TTS 객체 정리
     DisposableEffect(Unit) {

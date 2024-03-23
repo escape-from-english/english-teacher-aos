@@ -29,7 +29,7 @@ class MainViewModel @Inject constructor(
     fun uploadFile(excelFile: ByteArray?, type: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             englishRepository.uploadExcelFile(excelFile, type).collect {
-                _randomWord.value = it
+
             }
         }
     }

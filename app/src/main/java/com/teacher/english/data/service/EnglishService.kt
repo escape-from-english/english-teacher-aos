@@ -2,6 +2,7 @@ package com.teacher.english.data.service
 
 import com.teacher.english.data.model.EnglishResponse
 import com.teacher.english.data.model.Word
+import com.teacher.english.data.model.WordData
 import com.teacher.english.data.model.Words
 import okhttp3.MultipartBody
 import retrofit2.http.Body
@@ -15,7 +16,7 @@ interface EnglishService {
     suspend fun addWords(@Body words: Words)
 
     @GET("/v1/words/status/not-solved/random")
-    suspend fun getQuestion(): Word
+    suspend fun getQuestion(): WordData
 
     @GET("/v1/words/status/not-solved/existence")
     suspend fun isExistQuestion(): Boolean
