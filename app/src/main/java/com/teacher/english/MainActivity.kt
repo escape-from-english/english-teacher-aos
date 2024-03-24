@@ -7,11 +7,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -20,7 +23,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,6 +41,8 @@ import com.teacher.english.ui.screen.login.LoginScreen
 import com.teacher.english.ui.theme.EnglishTheme
 import com.teacher.english.ui.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint(ComponentActivity::class)
 class MainActivity : Hilt_MainActivity() {
@@ -44,7 +52,11 @@ class MainActivity : Hilt_MainActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val authViewModel: AuthViewModel = hiltViewModel()
-            val userProfileState = authViewModel.getUserProfileFlow().collectAsState(initial = UserProfile())
+            val userProfileState = authViewModel.userProfileState().collectAsState(
+                initial = ""
+            )
+            val isLoading = authViewModel.isLoading.collectAsState(initial = true)
+            authViewModel.setLoadingState()
             EnglishTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -68,24 +80,38 @@ class MainActivity : Hilt_MainActivity() {
                             }
                         },
                         content = {
-                            if (userProfileState.value.name == "") {
-                                LoginScreen(
-                                    authViewModel = authViewModel
-                                )
-                            } else {
-                                MainScreen(
+                            if (isLoading.value) {
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .navigationBarsPadding()
-                                        .padding(bottom = 84.dp)
-                                        .background(color = colorResource(id = R.color.hex_000000)),
-                                    snackBarState = snackBarState,
-                                    pagerState = pagerState
-                                )
+                                    .fillMaxSize()
+                                    .background(Color.Black)
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .align(Alignment.Center)
+                                    )
+                                }
+                            } else {
+                                if (userProfileState.value == "") {
+                                    LoginScreen(
+                                        authViewModel = authViewModel
+                                    )
+                                } else {
+                                    MainScreen(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .navigationBarsPadding()
+                                            .padding(bottom = 84.dp)
+                                            .background(color = colorResource(id = R.color.hex_000000)),
+                                        snackBarState = snackBarState,
+                                        pagerState = pagerState
+                                    )
+                                }
                             }
                         },
                         bottomBar = {
-                            if (userProfileState.value.name != "") {
+                            if (userProfileState.value != "") {
                                 GlobalNavigationBar(
                                     modifier = Modifier
                                         .background(color = colorResource(id = R.color.hex_000000))

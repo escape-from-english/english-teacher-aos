@@ -21,7 +21,7 @@ interface PreferenceStorage {
     suspend fun setAccessToken(accessToken: String)
     suspend fun setUserProfile(userProfile: UserProfile)
     val accessToken: Flow<String>
-    val userProfile: Flow<UserProfile>
+    val userProfile: Flow<String>
 }
 
 @Singleton
@@ -35,7 +35,7 @@ class DataStorePreferenceStorage @Inject constructor(
     }
 
     object PreferencesConstant {
-        val KEY_AUTH_DATA = stringPreferencesKey("pref_auth_data")
+        val KEY_NAME_DATA = stringPreferencesKey("pref_name_data")
         val KEY_ACCESS_TOKEN = stringPreferencesKey("pref_access_token")
     }
 
@@ -60,14 +60,16 @@ class DataStorePreferenceStorage @Inject constructor(
         }
     }
     override suspend fun setUserProfile(userProfile: UserProfile) {
-        profileDataStore.updateData {
-            userProfile
+        dataStore.edit { preferences ->
+            preferences[PreferencesConstant.KEY_NAME_DATA] = userProfile.name
         }
     }
     override val accessToken: Flow<String>
         get() = dataStore.data.catch { handleDefaultException(it) }.map { preferences ->
             preferences[PreferencesConstant.KEY_ACCESS_TOKEN] ?: ""
         }.distinctUntilChanged()
-    override val userProfile: Flow<UserProfile>
-        get() = profileDataStore.data.distinctUntilChanged()
+    override val userProfile: Flow<String>
+        get() = dataStore.data.catch { handleDefaultException(it) }.map { preferences ->
+            preferences[PreferencesConstant.KEY_NAME_DATA] ?: ""
+        }.distinctUntilChanged()
 }

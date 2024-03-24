@@ -19,5 +19,5 @@ interface EnglishService {
     suspend fun isExistQuestion(): Boolean
 
     @POST("/v1/member/sign-in")
-    suspend fun login(request: LoginRequest): LoginResponse
+    suspend fun login(@Body request: LoginRequest): LoginResponse
 }
