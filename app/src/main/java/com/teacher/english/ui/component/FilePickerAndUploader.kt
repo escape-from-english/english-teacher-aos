@@ -1,4 +1,4 @@
-package com.teacher.english.ui
+package com.teacher.english.ui.component
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.teacher.english.ui.viewmodel.MainViewModel
 import java.io.InputStream
 
 @Composable

@@ -1,4 +1,4 @@
-package com.teacher.english.ui
+package com.teacher.english.ui.component
 
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.layout.Column

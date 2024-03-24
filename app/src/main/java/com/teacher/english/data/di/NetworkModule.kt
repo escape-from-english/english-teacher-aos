@@ -1,17 +1,17 @@
 package com.teacher.english.data.di
 
 import android.app.Application
-import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.teacher.english.data.GsonDateFormatAdapter
-import com.teacher.english.data.RestAPIInterceptor
+import com.teacher.english.data.interceptor.RestAPIInterceptor
+import com.teacher.english.data.interceptor.UploadRestAPIInterceptor
+import com.teacher.english.data.repository.PreferenceStorage
 import com.teacher.english.data.service.EnglishService
 import com.teacher.english.data.service.UploadService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -41,9 +41,15 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun providesVehicleControlRestAPIInterceptor(
-        @ApplicationContext context: Context
-    ) = RestAPIInterceptor(context, "application/json")
+    fun providesRestAPIInterceptor(
+        preferenceStorage: PreferenceStorage
+    ) = RestAPIInterceptor("application/json", preferenceStorage)
+
+    @Singleton
+    @Provides
+    fun providesUploadRestAPIInterceptor(
+        preferenceStorage: PreferenceStorage
+    ) = UploadRestAPIInterceptor(preferenceStorage)
 
     @Singleton
     @Provides
@@ -66,12 +72,14 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideMultipartUploadService(
-        application: Application
+        application: Application,
+        uploadRestAPIInterceptor: UploadRestAPIInterceptor
     ): UploadService {
         return Retrofit.Builder()
             .baseUrl(SERVICE_URL)
             .client(
                 okhttpClient(application) {
+                    addInterceptor(uploadRestAPIInterceptor)
                 }
             )
             .addConverterFactory(GsonConverterFactory.create(gson))

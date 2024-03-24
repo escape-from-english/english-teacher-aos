@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">english</string>
+    <string name="quiz_tab_title">퀴즈</string>
+    <string name="profile_tab_title">내정보</string>
 </resources>

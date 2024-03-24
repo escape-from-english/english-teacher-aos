@@ -1,4 +1,4 @@
-package com.teacher.english.ui
+package com.teacher.english.ui.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

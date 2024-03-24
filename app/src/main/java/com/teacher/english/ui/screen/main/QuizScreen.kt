@@ -1,8 +1,8 @@
-package com.teacher.english.ui
+package com.teacher.english.ui.screen.main
 
+import com.teacher.english.ui.component.snackbar.SnackBarState
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,46 +10,35 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.hilt.navigation.compose.hiltViewModel
-import java.util.Locale
+import com.teacher.english.ui.component.FilePickerAndUploader
+import com.teacher.english.ui.viewmodel.MainViewModel
+import com.teacher.english.ui.component.TTSSpeakButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    val context = LocalContext.current
-    var ttsInitState by remember { mutableStateOf(false) }
-    val tts = remember {
-        TextToSpeech(context) { status ->
-            if (status != TextToSpeech.ERROR) {
-                ttsInitState = true
-            }
-        }
-    }
-    val mainViewModel: MainViewModel = hiltViewModel()
+fun QuizScreen(
+    mainViewModel: MainViewModel,
+    tts: TextToSpeech,
+    snackBarState: SnackBarState
+) {
     val randomWord = mainViewModel.randomWord.collectAsState()
     val isAddDialogOpen = remember {
         mutableStateOf(false)
@@ -58,23 +47,8 @@ fun MainScreen() {
         mutableStateOf(true)
     }
     val textState = remember { mutableStateOf("") }
-
-    if (ttsInitState) {
-        tts.language = Locale.US
-        ttsInitState = false
-    }
-
-
     LaunchedEffect(key1 = randomWord.value) {
         tts.speak(randomWord.value.data?.name, TextToSpeech.QUEUE_FLUSH, null, "")
-    }
-
-    // TTS 객체 정리
-    DisposableEffect(Unit) {
-        onDispose {
-            tts.stop()
-            tts.shutdown()
-        }
     }
     ConstraintLayout(
         modifier = Modifier
@@ -117,7 +91,7 @@ fun MainScreen() {
                     end.linkTo(parent.end)
                     top.linkTo(textField.bottom, margin = 16.dp)
                 }
-            )
+        )
 
         Button(
             modifier = Modifier
@@ -165,10 +139,10 @@ fun MainScreen() {
                             Color.DarkGray
                         )
                 ) {
-                    val (textField, sendButton) = createRefs()
+                    val (textFieldCom, sendButton) = createRefs()
                     TextField(
                         modifier = Modifier
-                            .constrainAs(textField) {
+                            .constrainAs(textFieldCom) {
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                                 top.linkTo(parent.top, margin = 16.dp)
@@ -189,7 +163,7 @@ fun MainScreen() {
                             .constrainAs(sendButton) {
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
-                                top.linkTo(textField.bottom, margin = 16.dp)
+                                top.linkTo(textFieldCom.bottom, margin = 16.dp)
                             },
                         onClick = {
                             isAddDialogOpen.value = false
