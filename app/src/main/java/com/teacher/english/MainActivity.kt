@@ -105,7 +105,8 @@ class MainActivity : Hilt_MainActivity() {
                                             .padding(bottom = 84.dp)
                                             .background(color = colorResource(id = R.color.hex_000000)),
                                         snackBarState = snackBarState,
-                                        pagerState = pagerState
+                                        pagerState = pagerState,
+                                        name = userProfileState.value
                                     )
                                 }
                             }

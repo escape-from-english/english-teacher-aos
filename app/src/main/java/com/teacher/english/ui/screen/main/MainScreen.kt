@@ -24,7 +24,8 @@ import java.util.Locale
 fun MainScreen(
     modifier: Modifier,
     snackBarState: SnackBarState,
-    pagerState: PagerState
+    pagerState: PagerState,
+    name: String
 ) {
     val context = LocalContext.current
     var ttsInitState by remember { mutableStateOf(false) }
@@ -57,7 +58,7 @@ fun MainScreen(
                 tts = tts,
                 snackBarState = snackBarState
             )
-            MainNavRoutes.Profile -> ProfileScreen()
+            MainNavRoutes.Profile -> ProfileScreen(name = name)
         }
     }
 }
