@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 @Keep
 @Serializable
 data class UserProfile(
-    val name: String = ""
+    val name: String = "",
+    val weekNumber: Int? = null
 )

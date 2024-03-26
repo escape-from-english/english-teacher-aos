@@ -53,7 +53,7 @@ class MainActivity : Hilt_MainActivity() {
         setContent {
             val authViewModel: AuthViewModel = hiltViewModel()
             val userProfileState = authViewModel.userProfileState().collectAsState(
-                initial = ""
+                initial = UserProfile()
             )
             val isLoading = authViewModel.isLoading.collectAsState(initial = true)
             authViewModel.setLoadingState()
@@ -93,7 +93,7 @@ class MainActivity : Hilt_MainActivity() {
                                     )
                                 }
                             } else {
-                                if (userProfileState.value == "") {
+                                if (userProfileState.value.name == "") {
                                     LoginScreen(
                                         authViewModel = authViewModel
                                     )
@@ -106,13 +106,13 @@ class MainActivity : Hilt_MainActivity() {
                                             .background(color = colorResource(id = R.color.hex_000000)),
                                         snackBarState = snackBarState,
                                         pagerState = pagerState,
-                                        name = userProfileState.value
+                                        userProfile = userProfileState.value
                                     )
                                 }
                             }
                         },
                         bottomBar = {
-                            if (userProfileState.value != "") {
+                            if (userProfileState.value.name != "") {
                                 GlobalNavigationBar(
                                     modifier = Modifier
                                         .background(color = colorResource(id = R.color.hex_000000))

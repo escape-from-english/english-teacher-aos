@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.teacher.english.data.model.UserProfile
 import com.teacher.english.ui.navigate.MainNavRoutes
 import com.teacher.english.ui.viewmodel.MainViewModel
 import java.util.Locale
@@ -25,7 +26,7 @@ fun MainScreen(
     modifier: Modifier,
     snackBarState: SnackBarState,
     pagerState: PagerState,
-    name: String
+    userProfile: UserProfile
 ) {
     val context = LocalContext.current
     var ttsInitState by remember { mutableStateOf(false) }
@@ -58,7 +59,8 @@ fun MainScreen(
                 tts = tts,
                 snackBarState = snackBarState
             )
-            MainNavRoutes.Profile -> ProfileScreen(name = name)
+            MainNavRoutes.WordsList -> WordsScreen(mainViewModel = mainViewModel, userProfile = userProfile)
+            MainNavRoutes.Profile -> ProfileScreen(userProfile = userProfile)
         }
     }
 }
