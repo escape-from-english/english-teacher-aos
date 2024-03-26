@@ -32,17 +32,17 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.loginAuthorize(name).collect {
                 it.data?.let { response ->
-                    if (response.accessToken == null) {
-
-                    } else {
+                    if (response.accessToken != null) {
                         preferenceStorage.setAccessToken(
                             response.accessToken
                         )
-                        preferenceStorage.setUserProfile(
-                            UserProfile(
-                                name = name
-                            )
-                        )
+                        authRepository.getProfile().collect { userProfile ->
+                            if (userProfile.data != null) {
+                                preferenceStorage.setUserProfile(
+                                  userProfile = userProfile.data
+                                )
+                            }
+                        }
                     }
                 }
             }

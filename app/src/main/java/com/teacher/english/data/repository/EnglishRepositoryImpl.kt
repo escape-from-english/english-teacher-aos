@@ -4,6 +4,7 @@ import android.util.Log
 import com.teacher.english.data.model.LoadingState
 import com.teacher.english.data.model.Word
 import com.teacher.english.data.model.Words
+import com.teacher.english.data.model.WordsData
 import com.teacher.english.data.service.EnglishService
 import com.teacher.english.data.service.UploadService
 import kotlinx.coroutines.flow.Flow
@@ -66,6 +67,17 @@ class EnglishRepositoryImpl @Inject constructor(
         try {
             val isExistRandomWordResp = englishService.isExistQuestion()
             emit(LoadingState.success(isExistRandomWordResp))
+        } catch (e: Exception) {
+            emit(LoadingState.error(e, null))
+        }
+    }
+
+    override suspend fun getWordsList(weekNumber: Int): Flow<LoadingState<List<Word>>> = flow {
+        emit(LoadingState.loading(null))
+        try {
+            val getWordsResp = englishService.getWeekWords(weekNumber)
+
+            emit(LoadingState.success(getWordsResp.words))
         } catch (e: Exception) {
             emit(LoadingState.error(e, null))
         }

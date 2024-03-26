@@ -49,6 +49,15 @@ fun GlobalNavigationBar(modifier: Modifier, pagerState: PagerState) {
                 coroutineScope = coroutineScope
             )
             NavigationButton(
+                activeIconResourceId = MainNavRoutes.WordsList.activeIconResId,
+                inactiveIconResourceId = MainNavRoutes.WordsList.inactiveIconResId,
+                labelResourceId = MainNavRoutes.WordsList.titleResId,
+                pageIndex = MainNavRoutes.WordsList.ordinal,
+                pagerState = pagerState,
+                isEnable = true,
+                coroutineScope = coroutineScope
+            )
+            NavigationButton(
                 activeIconResourceId = MainNavRoutes.Profile.activeIconResId,
                 inactiveIconResourceId = MainNavRoutes.Profile.inactiveIconResId,
                 labelResourceId = MainNavRoutes.Profile.titleResId,
