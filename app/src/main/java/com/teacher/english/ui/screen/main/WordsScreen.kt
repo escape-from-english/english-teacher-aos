@@ -1,6 +1,7 @@
 package com.teacher.english.ui.screen.main
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.teacher.english.data.model.UserProfile
 import com.teacher.english.ui.component.list.EnglishListView
 import com.teacher.english.ui.viewmodel.MainViewModel
@@ -37,11 +39,13 @@ fun WordsScreen(
         )
         EnglishListView(
             modifier = Modifier
-                .fillMaxSize()
+                .navigationBarsPadding()
                 .constrainAs(contents) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     top.linkTo(title.bottom)
+                    bottom.linkTo(parent.bottom)
+                    height = Dimension.fillToConstraints
                 },
             listItems = listItem.value
         )
