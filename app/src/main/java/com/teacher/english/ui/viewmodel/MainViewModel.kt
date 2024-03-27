@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun uploadWordList(words: List<String>) {
+    fun uploadWordList(words: List<Word>) {
         viewModelScope.launch(Dispatchers.IO) {
             englishRepository.uploadWordList(Words(
                 words

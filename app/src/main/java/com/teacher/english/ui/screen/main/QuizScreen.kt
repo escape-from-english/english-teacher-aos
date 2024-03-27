@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.teacher.english.data.model.Word
 import com.teacher.english.ui.component.FilePickerAndUploader
 import com.teacher.english.ui.viewmodel.MainViewModel
 import com.teacher.english.ui.component.TTSSpeakButton
@@ -47,6 +48,7 @@ fun QuizScreen(
         mutableStateOf(true)
     }
     val textState = remember { mutableStateOf("") }
+    val meaningState = remember { mutableStateOf("") }
     LaunchedEffect(key1 = randomWord.value) {
         tts.speak(randomWord.value.data?.name, TextToSpeech.QUEUE_FLUSH, null, "")
     }
@@ -133,20 +135,19 @@ fun QuizScreen(
                 }) {
                 ConstraintLayout(
                     modifier = Modifier
-                        .size(300.dp)
+                        .size(350.dp)
                         .padding(24.dp)
                         .background(
                             Color.DarkGray
                         )
                 ) {
-                    val (textFieldCom, sendButton) = createRefs()
+                    val (textFieldCom, meaningFieldCom, sendButton) = createRefs()
                     TextField(
                         modifier = Modifier
                             .constrainAs(textFieldCom) {
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                                 top.linkTo(parent.top, margin = 16.dp)
-                                bottom.linkTo(parent.bottom, margin = 16.dp)
                             },
                         value = textState.value,
                         onValueChange = { newText ->
@@ -157,18 +158,34 @@ fun QuizScreen(
                             textColor = Color.Black
                         ),
                         label = { Text("Input a word") })
+                    TextField(
+                        modifier = Modifier
+                            .constrainAs(meaningFieldCom) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                top.linkTo(textFieldCom.bottom, margin = 16.dp)
+                            },
+                        value = meaningState.value,
+                        onValueChange = { newText ->
+                            meaningState.value = newText
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color.White,
+                            textColor = Color.Black
+                        ),
+                        label = { Text("Input a meaning") })
 
                     Button(
                         modifier = Modifier
                             .constrainAs(sendButton) {
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
-                                top.linkTo(textFieldCom.bottom, margin = 16.dp)
+                                top.linkTo(meaningFieldCom.bottom, margin = 16.dp)
                             },
                         onClick = {
                             isAddDialogOpen.value = false
                             mainViewModel.uploadWordList(
-                                listOf(textState.value)
+                                listOf(Word(textState.value, meaningState.value))
                             )
                         }) {
                         Text(text = "단어 전송")

@@ -49,5 +49,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun getProfileData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            authRepository.getProfile().collect { userProfile ->
+                if (userProfile.data != null) {
+                    preferenceStorage.setUserProfile(
+                        userProfile = userProfile.data
+                    )
+                }
+            }
+        }
+    }
+
     fun userProfileState() = preferenceStorage.userProfile
 }

@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +57,10 @@ class MainActivity : Hilt_MainActivity() {
                 initial = UserProfile()
             )
             val isLoading = authViewModel.isLoading.collectAsState(initial = true)
-            authViewModel.setLoadingState()
+            LaunchedEffect(key1 = Unit) {
+                authViewModel.setLoadingState()
+                authViewModel.getProfileData()
+            }
             EnglishTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -83,8 +87,8 @@ class MainActivity : Hilt_MainActivity() {
                             if (isLoading.value) {
                                 Box(
                                     modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Black)
+                                        .fillMaxSize()
+                                        .background(Color.Black)
                                 ) {
                                     CircularProgressIndicator(
                                         modifier = Modifier
