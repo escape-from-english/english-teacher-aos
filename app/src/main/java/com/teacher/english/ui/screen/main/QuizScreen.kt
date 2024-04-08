@@ -2,14 +2,17 @@ package com.teacher.english.ui.screen.main
 
 import com.teacher.english.ui.component.snackbar.SnackBarState
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -18,8 +21,11 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,27 +34,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.teacher.english.R
+import com.teacher.english.data.model.UserProfile
 import com.teacher.english.data.model.Word
 import com.teacher.english.ui.component.FilePickerAndUploader
 import com.teacher.english.ui.viewmodel.MainViewModel
 import com.teacher.english.ui.component.TTSSpeakButton
+import com.teacher.english.ui.component.button.BottomActionButton
+import com.teacher.english.ui.component.dialog.EnglishSelectionDialog
+import com.teacher.english.ui.component.progress.EnglishProgressBar
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreen(
     mainViewModel: MainViewModel,
     tts: TextToSpeech,
-    snackBarState: SnackBarState
+    snackBarState: SnackBarState,
+    userProfile: UserProfile
 ) {
     val randomWord = mainViewModel.randomWord.collectAsState()
-    val isAddDialogOpen = remember {
-        mutableStateOf(false)
-    }
     val isEnglishText = remember {
         mutableStateOf(true)
     }
-    val textState = remember { mutableStateOf("") }
-    val meaningState = remember { mutableStateOf("") }
+    val listItem = mainViewModel.englishListFlow.collectAsState()
+    val sizeOfSolvedWords = remember {
+        mutableIntStateOf(listItem.value.count { it.iconResource == R.drawable.baseline_check_circle_24 })
+        }
+    val sizeOfList = listItem.value.size
+    val progressState = remember {
+        mutableIntStateOf(0)
+    }
+    LaunchedEffect(key1 = Unit) {
+        mainViewModel.getEnglishWordsList(userProfile.weekNumber ?: 0)
+    }
+    LaunchedEffect(key1 = listItem.value) {
+        sizeOfSolvedWords.intValue = listItem.value.count { it.iconResource == R.drawable.baseline_check_circle_24 }
+        progressState.intValue = ((sizeOfSolvedWords.intValue / sizeOfList.toDouble()) * 100.0).toInt()
+    }
     LaunchedEffect(key1 = randomWord.value) {
         tts.speak(randomWord.value.data?.name, TextToSpeech.QUEUE_FLUSH, null, "")
     }
@@ -56,7 +79,30 @@ fun QuizScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val (textField, ttsField, fileUploadField, getRandomWordButton, addWordButton) = createRefs()
+        val (textField, ttsField, fileUploadField, getRandomWordButton, progressBar, progressText) = createRefs()
+
+        EnglishProgressBar(
+            progressColor = R.color.hex_5A46FA,
+            backgroundColor = R.color.hex_454545,
+            percent = progressState,
+            height = 10.dp,
+            modifier = Modifier
+                .constrainAs(progressBar) {
+                    top.linkTo(parent.top, margin = 24.dp)
+                }
+        )
+        Text(
+            modifier = Modifier
+                .constrainAs(progressText) {
+                   start.linkTo(progressBar.start, margin = 36.dp)
+                   top.linkTo(progressBar.top)
+                   bottom.linkTo(progressBar.bottom)
+                },
+            textAlign = TextAlign.Center,
+            text = "${sizeOfSolvedWords.intValue}/$sizeOfList",
+            fontSize = 10.sp,
+            color = Color.White
+        )
 
         Column(
             modifier = Modifier
@@ -102,7 +148,11 @@ fun QuizScreen(
                     end.linkTo(parent.end)
                     top.linkTo(ttsField.bottom, margin = 16.dp)
                 },
-            onClick = { mainViewModel.getRandomWord()}) {
+            onClick = {
+                mainViewModel.getRandomWord()
+                sizeOfSolvedWords.intValue = sizeOfSolvedWords.intValue + 1
+                progressState.intValue = ((sizeOfSolvedWords.intValue / sizeOfList.toDouble()) * 100.0).toInt()
+            }) {
             Text(text = "랜덤 word 가져오기")
         }
 
@@ -116,84 +166,6 @@ fun QuizScreen(
             ,
             mainViewModel = mainViewModel
         )
-
-        Button(
-            modifier = Modifier
-                .constrainAs(addWordButton) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(fileUploadField.bottom, margin = 16.dp)
-                },
-            onClick = { isAddDialogOpen.value = true}) {
-            Text(text = "단어 추가")
-        }
-
-        if (isAddDialogOpen.value) {
-            Dialog(
-                onDismissRequest = {
-                    isAddDialogOpen.value = false
-                }) {
-                ConstraintLayout(
-                    modifier = Modifier
-                        .size(350.dp)
-                        .padding(24.dp)
-                        .background(
-                            Color.DarkGray
-                        )
-                ) {
-                    val (textFieldCom, meaningFieldCom, sendButton) = createRefs()
-                    TextField(
-                        modifier = Modifier
-                            .constrainAs(textFieldCom) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                top.linkTo(parent.top, margin = 16.dp)
-                            },
-                        value = textState.value,
-                        onValueChange = { newText ->
-                            textState.value = newText
-                        },
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.White,
-                            textColor = Color.Black
-                        ),
-                        label = { Text("Input a word") })
-                    TextField(
-                        modifier = Modifier
-                            .constrainAs(meaningFieldCom) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                top.linkTo(textFieldCom.bottom, margin = 16.dp)
-                            },
-                        value = meaningState.value,
-                        onValueChange = { newText ->
-                            meaningState.value = newText
-                        },
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.White,
-                            textColor = Color.Black
-                        ),
-                        label = { Text("Input a meaning") })
-
-                    Button(
-                        modifier = Modifier
-                            .constrainAs(sendButton) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                top.linkTo(meaningFieldCom.bottom, margin = 16.dp)
-                            },
-                        onClick = {
-                            isAddDialogOpen.value = false
-                            mainViewModel.uploadWordList(
-                                listOf(Word(textState.value, meaningState.value))
-                            )
-                        }) {
-                        Text(text = "단어 전송")
-                    }
-                }
-
-            }
-        }
 
     }
 }

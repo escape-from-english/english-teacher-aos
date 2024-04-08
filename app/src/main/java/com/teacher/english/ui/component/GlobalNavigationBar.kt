@@ -40,19 +40,19 @@ fun GlobalNavigationBar(modifier: Modifier, pagerState: PagerState) {
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             NavigationButton(
-                activeIconResourceId = MainNavRoutes.Quiz.activeIconResId,
-                inactiveIconResourceId = MainNavRoutes.Quiz.inactiveIconResId,
-                labelResourceId = MainNavRoutes.Quiz.titleResId,
-                pageIndex = MainNavRoutes.Quiz.ordinal,
+                activeIconResourceId = MainNavRoutes.WordsList.activeIconResId,
+                inactiveIconResourceId = MainNavRoutes.WordsList.inactiveIconResId,
+                labelResourceId = MainNavRoutes.WordsList.titleResId,
+                pageIndex = MainNavRoutes.WordsList.ordinal,
                 pagerState = pagerState,
                 isEnable = true,
                 coroutineScope = coroutineScope
             )
             NavigationButton(
-                activeIconResourceId = MainNavRoutes.WordsList.activeIconResId,
-                inactiveIconResourceId = MainNavRoutes.WordsList.inactiveIconResId,
-                labelResourceId = MainNavRoutes.WordsList.titleResId,
-                pageIndex = MainNavRoutes.WordsList.ordinal,
+                activeIconResourceId = MainNavRoutes.Quiz.activeIconResId,
+                inactiveIconResourceId = MainNavRoutes.Quiz.inactiveIconResId,
+                labelResourceId = MainNavRoutes.Quiz.titleResId,
+                pageIndex = MainNavRoutes.Quiz.ordinal,
                 pagerState = pagerState,
                 isEnable = true,
                 coroutineScope = coroutineScope

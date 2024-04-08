@@ -5,6 +5,7 @@ import android.speech.tts.TextToSpeech
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ fun MainScreen(
         tts.language = Locale.US
         ttsInitState = false
     }
+
     // TTS 객체 정리
     DisposableEffect(Unit) {
         onDispose {
@@ -54,12 +56,13 @@ fun MainScreen(
         count = MainNavRoutes.entries.size, state = pagerState, modifier = modifier
     ) { page ->
         when (MainNavRoutes.entries[page]) {
+            MainNavRoutes.WordsList -> WordsScreen(mainViewModel = mainViewModel, userProfile = userProfile)
             MainNavRoutes.Quiz -> QuizScreen(
                 mainViewModel = mainViewModel,
                 tts = tts,
-                snackBarState = snackBarState
+                snackBarState = snackBarState,
+                userProfile
             )
-            MainNavRoutes.WordsList -> WordsScreen(mainViewModel = mainViewModel, userProfile = userProfile)
             MainNavRoutes.Profile -> ProfileScreen(userProfile = userProfile)
         }
     }

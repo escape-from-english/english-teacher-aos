@@ -7,15 +7,15 @@ enum class MainNavRoutes(
     val activeIconResId: Int,
     val inactiveIconResId: Int
 ) {
-    Quiz(
-        titleResId = R.string.quiz_tab_title,
-        activeIconResId = R.drawable.baseline_quiz_24,
-        inactiveIconResId = R.drawable.baseline_quiz_24
-    ),
     WordsList(
         titleResId = R.string.words_tab_title,
         activeIconResId = R.drawable.baseline_checklist_rtl_24,
         inactiveIconResId = R.drawable.baseline_checklist_rtl_24
+    ),
+    Quiz(
+        titleResId = R.string.quiz_tab_title,
+        activeIconResId = R.drawable.baseline_quiz_24,
+        inactiveIconResId = R.drawable.baseline_quiz_24
     ),
     Profile(
         titleResId = R.string.profile_tab_title,

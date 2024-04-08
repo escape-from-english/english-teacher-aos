@@ -74,7 +74,7 @@ class MainActivity : Hilt_MainActivity() {
                     val snackBarState =
                         rememberSnackBarState(snackBarMessage = snackBarMessageState)
                     val pagerState =
-                        rememberPagerState(initialPage = MainNavRoutes.Quiz.ordinal)
+                        rememberPagerState(initialPage = MainNavRoutes.WordsList.ordinal)
                     Scaffold(
                         snackbarHost = {
                             SnackbarHost(snackBarState.snackBarHostState) { _ ->
