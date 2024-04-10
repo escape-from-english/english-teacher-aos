@@ -2,6 +2,7 @@ package com.teacher.english.data.repository
 
 import android.util.Log
 import com.teacher.english.data.model.LoadingState
+import com.teacher.english.data.model.TeamRequest
 import com.teacher.english.data.model.Word
 import com.teacher.english.data.model.Words
 import com.teacher.english.data.model.WordsData
@@ -80,6 +81,27 @@ class EnglishRepositoryImpl @Inject constructor(
             emit(LoadingState.success(getWordsResp.words))
         } catch (e: Exception) {
             emit(LoadingState.error(e, null))
+        }
+    }
+
+    override suspend fun getWordsCount(weekNumber: Int): Flow<LoadingState<Int>> = flow {
+        emit(LoadingState.loading(null))
+        try {
+            val getWordsResp = englishService.getWeekWordsCount(weekNumber)
+
+            emit(LoadingState.success(getWordsResp.registeredWordsCount))
+        } catch (e: Exception) {
+            emit(LoadingState.error(e, null))
+        }
+    }
+
+    override suspend fun changeTeamId(teamId: Long): Flow<LoadingState<Nothing>> = flow {
+        emit(LoadingState.loading(null))
+        try {
+            englishService.changeTeamId(TeamRequest(teamId))
+            emit(LoadingState.success(null))
+        } catch (e: Exception) {
+            emit(LoadingState.error(Exception("해당 ID : ${teamId.toInt()} 팀은 존재하지 않습니다."), null))
         }
     }
 
