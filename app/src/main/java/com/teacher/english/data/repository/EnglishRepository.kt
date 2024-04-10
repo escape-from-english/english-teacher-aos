@@ -13,4 +13,6 @@ interface EnglishRepository {
     suspend fun getRandomWord(): Flow<LoadingState<Word>>
     suspend fun isExistRandomWord(): Flow<LoadingState<Boolean>>
     suspend fun getWordsList(weekNumber: Int): Flow<LoadingState<List<Word>>>
+    suspend fun getWordsCount(weekNumber: Int): Flow<LoadingState<Int>>
+    suspend fun changeTeamId(teamId: Long): Flow<LoadingState<Nothing>>
 }

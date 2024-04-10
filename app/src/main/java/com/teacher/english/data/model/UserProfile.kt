@@ -7,5 +7,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserProfile(
     val name: String = "",
-    val weekNumber: Int? = null
+    val weekNumber: Int? = null,
+    val selectedTeamId: Int? = null
 )

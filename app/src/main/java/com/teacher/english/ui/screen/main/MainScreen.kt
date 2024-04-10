@@ -63,7 +63,7 @@ fun MainScreen(
                 snackBarState = snackBarState,
                 userProfile
             )
-            MainNavRoutes.Profile -> ProfileScreen(userProfile = userProfile)
+            MainNavRoutes.Profile -> ProfileScreen(userProfile = userProfile, mainViewModel, snackBarState)
         }
     }
 }

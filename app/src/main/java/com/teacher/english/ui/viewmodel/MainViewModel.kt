@@ -30,6 +30,11 @@ class MainViewModel @Inject constructor(
     MutableStateFlow(LoadingState.success(Word("단어를 가져와 주세요", "")))
     val randomWord = _randomWord
 
+    private val _errorText: MutableStateFlow<String> =
+        MutableStateFlow("")
+    val errorText = _errorText
+
+
     private val _isEnglishWordExist: MutableStateFlow<LoadingState<Boolean>> =
         MutableStateFlow(LoadingState.success(null))
     val isEnglishWordExist = _isEnglishWordExist
@@ -37,6 +42,10 @@ class MainViewModel @Inject constructor(
     private val _englishListFlow: MutableStateFlow<List<EnglishListItem>> =
         MutableStateFlow(emptyList())
     val englishListFlow = _englishListFlow
+
+    private val _englishWordsCountFlow: MutableStateFlow<Int> =
+        MutableStateFlow(0)
+    val englishWordsCountFlow = _englishWordsCountFlow
 
     fun uploadFile(excelFile: ByteArray?, type: String?) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -88,6 +97,25 @@ class MainViewModel @Inject constructor(
 
                     }
                 )   } ?: emptyList())
+            }
+        }
+    }
+
+    fun getEnglishWordCount(weekNumber: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            englishRepository.getWordsCount(weekNumber).collect { count ->
+                _englishWordsCountFlow.tryEmit(count.data ?: 0)
+            }
+        }
+    }
+
+    fun changeTeamId(teamId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _errorText.value = ""
+            englishRepository.changeTeamId(teamId).collect { count ->
+                if (count is LoadingState.Error) {
+                    _errorText.value = count.throwable?.message ?: ""
+                }
             }
         }
     }

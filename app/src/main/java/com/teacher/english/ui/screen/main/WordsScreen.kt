@@ -1,5 +1,8 @@
 package com.teacher.english.ui.screen.main
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -35,6 +39,7 @@ import com.teacher.english.ui.component.button.BottomActionButton
 import com.teacher.english.ui.component.dialog.EnglishSelectionDialog
 import com.teacher.english.ui.component.list.EnglishListView
 import com.teacher.english.ui.viewmodel.MainViewModel
+import java.io.InputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +54,17 @@ fun WordsScreen(
     }
     val textState = remember { mutableStateOf("") }
     val meaningState = remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val pickFile = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? ->
+            uri?.let {
+                val inputStream: InputStream? = context.contentResolver.openInputStream(it)
+                val byteArray = inputStream?.readBytes()
+                mainViewModel.uploadFile(byteArray, context.contentResolver.getType(it))
+            }
+        }
+    )
     LaunchedEffect(key1 = Unit) {
         mainViewModel.getEnglishWordsList(userProfile.weekNumber ?: 0)
     }
@@ -56,7 +72,7 @@ fun WordsScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val (contents, title, addWordButton) = createRefs()
+        val (contents, title, addWordButton, emptyDesc) = createRefs()
         Text(
             modifier = Modifier
                 .constrainAs(title){
@@ -98,6 +114,7 @@ fun WordsScreen(
                     rightIconResourceId = R.drawable.baseline_playlist_add_24,
                     onLeftClick = {
                         isSelectionDialogOpen = false
+                        pickFile.launch("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     },
                     onRightClick = {
                         isAddDialogOpen.value = true
@@ -180,6 +197,20 @@ fun WordsScreen(
                 }
 
             }
+        }
+
+        if (listItem.value.isEmpty()) {
+            Text(
+                modifier = Modifier
+                    .constrainAs(emptyDesc) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                text = "단어를 추가해 주세요.",
+                color = Color.White
+            )
         }
 
     }

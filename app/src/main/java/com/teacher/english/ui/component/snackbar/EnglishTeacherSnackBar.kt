@@ -34,7 +34,7 @@ fun EnglishTeacherSnackBar(
     Snackbar(
         modifier = Modifier
             .padding(
-                bottom = if (snackBarMessage?.snackBarImage != null) 192.dp else 576.dp,
+                bottom = 60.dp,
                 start = 40.dp,
                 end = 40.dp
             )

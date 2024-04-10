@@ -38,6 +38,7 @@ class DataStorePreferenceStorage @Inject constructor(
     object PreferencesConstant {
         val KEY_NAME_DATA = stringPreferencesKey("pref_name_data")
         val KEY_WEEK_DATA = intPreferencesKey("pref_week_data")
+        val KEY_TEAM_ID = intPreferencesKey("pref_team_id")
         val KEY_ACCESS_TOKEN = stringPreferencesKey("pref_access_token")
     }
 
@@ -65,6 +66,7 @@ class DataStorePreferenceStorage @Inject constructor(
         dataStore.edit { preferences ->
             preferences[PreferencesConstant.KEY_NAME_DATA] = userProfile.name
             preferences[PreferencesConstant.KEY_WEEK_DATA] = userProfile.weekNumber ?: 0
+            preferences[PreferencesConstant.KEY_TEAM_ID] = userProfile.selectedTeamId ?: 0
         }
     }
     override val accessToken: Flow<String>
@@ -75,7 +77,8 @@ class DataStorePreferenceStorage @Inject constructor(
         get() = dataStore.data.catch { handleDefaultException(it) }.map { preferences ->
             UserProfile(
                 name = preferences[PreferencesConstant.KEY_NAME_DATA] ?: "",
-                weekNumber = preferences[PreferencesConstant.KEY_WEEK_DATA] ?: 0
+                weekNumber = preferences[PreferencesConstant.KEY_WEEK_DATA] ?: 0,
+                selectedTeamId = preferences[PreferencesConstant.KEY_TEAM_ID] ?: 0
             )
         }.distinctUntilChanged()
 }

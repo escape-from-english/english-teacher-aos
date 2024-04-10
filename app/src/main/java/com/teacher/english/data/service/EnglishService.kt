@@ -2,7 +2,9 @@ package com.teacher.english.data.service
 
 import com.teacher.english.data.model.LoginRequest
 import com.teacher.english.data.model.LoginResponse
+import com.teacher.english.data.model.TeamRequest
 import com.teacher.english.data.model.UserProfile
+import com.teacher.english.data.model.WordCount
 import com.teacher.english.data.model.WordData
 import com.teacher.english.data.model.Words
 import com.teacher.english.data.model.WordsData
@@ -33,4 +35,9 @@ interface EnglishService {
     suspend fun getNotSolvedWords(): WordsData
     @GET("/v1/words/weeks/{weekNumber}")
     suspend fun getWeekWords(@Path("weekNumber") weekNumber: Int): WordsData
+    @GET("/v1/words/weeks/{weekNumber}/count")
+    suspend fun getWeekWordsCount(@Path("weekNumber") weekNumber: Int): WordCount
+
+    @POST("/v1/teams")
+    suspend fun changeTeamId(@Body request: TeamRequest)
 }
